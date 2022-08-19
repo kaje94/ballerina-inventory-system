@@ -1,6 +1,6 @@
 import ballerina/http;
 import ballerina/io;
-// import wso2/choreo.sendemail;
+import wso2/choreo.sendemail;
 
 # Generate and return 202 order accepted response
 # + area - Area where the order is currently at. eg: inventory, payment, etc
@@ -25,14 +25,14 @@ function orderPlacedResponse() returns http:Response {
 # + emailAddress - Email address to which the email needs to be sent
 function sendOrderPlacedMail(string emailAddress) {
     io:println(string `Sending order completion email to ${emailAddress}`);
-    // string mailSubject = "Your order is complete";
-    // string mailBody = "Your order has been dispatched to your address after verifying your payment and inventory availablity.";
+    string mailSubject = "Your order is complete";
+    string mailBody = "Your order has been dispatched to your address after verifying your payment and inventory availablity.";
 
-    // sendemail:Client|error sendemailEp = new ();
-    // if (!(sendemailEp is error)) {
-    //     string|error emailRes = sendemailEp->sendEmail(recipient = emailAddress, subject = mailSubject, body = mailBody);
-    //     if (!(emailRes is error)) {
-    //         io:println("Failed to send email notification")
-    //     }
-    // }
+    sendemail:Client|error sendemailEp = new ();
+    if (!(sendemailEp is error)) {
+        string|error emailRes = sendemailEp->sendEmail(recipient = emailAddress, subject = mailSubject, body = mailBody);
+        if (!(emailRes is error)) {
+            io:println("Failed to send email notification");
+        }
+    }
 }
