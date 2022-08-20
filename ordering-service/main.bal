@@ -51,6 +51,46 @@ service / on new http:Listener(9090) {
         return orderPlacedResponse();
     }
 
+    # Get list of failed orders
+    # + return - List of failed orders at each stage
+    resource function get 'order/failed() returns json|error {
+
+        http:Client inventortEndpoint = check new (invetentory_service_url);
+        json inventoryResponse = check inventortEndpoint->get("/inventory/failed", {"API-Key": inventory_api_key});
+
+        http:Client paymentEndpoint = check new (payment_service_url);
+        json paymentResponse = check paymentEndpoint->get("/payment/failed", {"API-Key": payment_api_key});
+
+        http:Client dispatchEndpoint = check new (dispatch_service_url);
+        json dispatchResponse = check dispatchEndpoint->get("/dispatch/failed", {"API-Key": dispatch_api_key});
+
+        return {
+            "inventory": inventoryResponse,
+            "payment": paymentResponse,
+            "dispatch": dispatchResponse
+        };
+    }
+
+    # Retry all the failed orders in inventory, payment and dispatch services
+    # + return - List of failed orders at each stage
+    resource function post 'order/retry_failed() returns json|error {
+
+        http:Client inventortEndpoint = check new (invetentory_service_url);
+        json inventoryResponse = check inventortEndpoint->post("/inventory/retry_failed", {}, {"API-Key": inventory_api_key});
+
+        http:Client paymentEndpoint = check new (payment_service_url);
+        json paymentResponse = check paymentEndpoint->post("/payment/retry_failed", {}, {"API-Key": payment_api_key});
+
+        http:Client dispatchEndpoint = check new (dispatch_service_url);
+        json dispatchResponse = check dispatchEndpoint->post("/dispatch/retry_failed", {}, {"API-Key": dispatch_api_key});
+
+        return {
+            "inventory": inventoryResponse,
+            "payment": paymentResponse,
+            "dispatch": dispatchResponse
+        };
+    }
+
     # Handle order dispatch and payment handling for successful inventory retry invocation
     # + return - Order placed or accepted response
     resource function post 'order/handle_inventory_retry(@http:Payload ItemAllocation item) returns http:Response|error {
