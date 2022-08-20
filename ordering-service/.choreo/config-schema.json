@@ -12,11 +12,23 @@
               "type": "string",
               "description": ""
             },
+            "inventory_api_key": {
+              "type": "string",
+              "description": ""
+            },
             "payment_service_url": {
               "type": "string",
               "description": ""
             },
+            "payment_api_key": {
+              "type": "string",
+              "description": ""
+            },
             "dispatch_service_url": {
+              "type": "string",
+              "description": ""
+            },
+            "dispatch_api_key": {
               "type": "string",
               "description": ""
             }

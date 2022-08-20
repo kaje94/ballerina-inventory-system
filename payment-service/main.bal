@@ -1,7 +1,10 @@
 import ballerina/http;
 import ballerina/io;
 
+# Order service base URL
 configurable string order_service_url = "http://localhost:9090";
+# Order service API Key header
+configurable string order_api_key = "";
 
 # Table to keep track of the failed payments
 table<Payment> key(orderId) failedPayments = table [];
@@ -33,7 +36,7 @@ service / on new http:Listener(9092) {
         foreach Payment item in failedPayments {
             http:Client|error orderEndpoint = new (order_service_url);
             if (!(orderEndpoint is error)) {
-                string|error orderResponse = orderEndpoint->post("/order/handle_payment_retry", item);
+                string|error orderResponse = orderEndpoint->post("/order/handle_payment_retry", item, {"API-Key": order_api_key});
                 if (!(orderResponse is error)) {
                     succeededPayments.push(item);
                 } else {
@@ -47,5 +50,11 @@ service / on new http:Listener(9092) {
         }
 
         return succeededPayments;
+    }
+
+    # Health check to check if the service is running
+    # + return - string
+    resource function get payment/health() returns string {
+        return "running";
     }
 }

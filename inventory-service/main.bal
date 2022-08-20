@@ -3,6 +3,8 @@ import ballerina/io;
 
 # Order service base URL
 configurable string order_service_url = "http://localhost:9090";
+# Order service API Key header
+configurable string order_api_key = "";
 
 service / on new http:Listener(9091) {
     # Get all items in the inventory
@@ -73,7 +75,7 @@ service / on new http:Listener(9091) {
                 if (inventory.quantity > item.requiredCount) {
                     http:Client|error orderEndpoint = new (order_service_url);
                     if (!(orderEndpoint is error)) {
-                        string|error orderResponse = orderEndpoint->post("/order/handle_inventory_retry", item);
+                        string|error orderResponse = orderEndpoint->post("/order/handle_inventory_retry", item, {"API-Key": order_api_key});
                         if (!(orderResponse is error)) {
                             inventory.quantity = inventory.quantity - item.requiredCount;
                             inventroyItems.put(inventory);
@@ -97,6 +99,12 @@ service / on new http:Listener(9091) {
     # + return - ItemAllocation list
     resource function get inventory/failed() returns ItemAllocation[] {
         return failedOrders.toArray();
+    }
+
+    # Health check to check if the service is running
+    # + return - string
+    resource function get inventory/health() returns string {
+        return "running";
     }
 }
 
