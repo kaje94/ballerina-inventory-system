@@ -36,3 +36,8 @@ function sendOrderPlacedMail(string emailAddress) {
         }
     }
 }
+
+function itemToXml(ItemAllocation item) returns xml {
+    // Uses a template containing a query expression, which also contains a template.
+    return xml `<payment><orderId>${item.orderId}</orderId><email>${item.email}</email><itemId>${item.itemId}</itemId><requiredCount>${item.requiredCount}</requiredCount><succeedDispatch>${item.succeedDispatch==true}</succeedDispatch><succeedPayment>${item.succeedPayment==true}</succeedPayment></payment>`;
+}

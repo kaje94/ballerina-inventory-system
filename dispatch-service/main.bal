@@ -1,5 +1,7 @@
 import ballerina/http;
 import ballerina/io;
+import ballerina/random;
+import ballerina/lang.runtime;
 
 # Order service base URL
 configurable string order_service_url = "http://localhost:9090";
@@ -8,6 +10,14 @@ configurable string order_api_key = "";
 
 # Table to keep track of the failed delivery dispatches
 table<Dispatch> key(orderId) failedDispatches = table [];
+
+function getRandomBool() returns boolean{
+    int|error randomInteger = random:createIntInRange(1, 3);
+    if(randomInteger is error){
+        return false;
+    }
+    return randomInteger % 2 == 0;
+}
 
 service / on new http:Listener(9093) {
     # Handle dispatch for an order
@@ -25,13 +35,25 @@ service / on new http:Listener(9093) {
 
     # Get list of failed item dispatches
     # + return - Dispatch list
-    resource function get dispatch/failed() returns Dispatch[] {
+    resource function get dispatch/failed() returns Dispatch[]|error {
+        if (getRandomBool()) {
+            io:println("Randomly sleeping");
+            runtime:sleep(60);
+            return error(string `Request randomly failed`);
+        }
+
         return failedDispatches.toArray();
     }
 
     # Retry dispatches that failed previously
     # + return - List of successfull dispatches
-    resource function post dispatch/retry_failed() returns Dispatch[] {
+    resource function post dispatch/retry_failed() returns Dispatch[]|error {
+        if (getRandomBool()) {
+            io:println("Randomly sleeping");
+            runtime:sleep(60);
+            return error(string `Request randomly failed`);
+        }
+
         Dispatch[] succeededDispatches = [];
         foreach Dispatch item in failedDispatches {
             http:Client|error orderEndpoint = new (order_service_url);

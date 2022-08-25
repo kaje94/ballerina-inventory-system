@@ -294,10 +294,24 @@ dependencies = [
 	{org = "ballerina", name = "http"},
 	{org = "ballerina", name = "io"},
 	{org = "ballerina", name = "uuid"},
-	{org = "ballerinai", name = "observe"}
+	{org = "ballerinai", name = "observe"},
+	{org = "wso2", name = "choreo.sendemail"}
 ]
 modules = [
 	{org = "kajendran", packageName = "ordering_service", moduleName = "ordering_service"}
+]
+
+[[package]]
+org = "wso2"
+name = "choreo.sendemail"
+version = "0.5.1"
+dependencies = [
+	{org = "ballerina", name = "http"},
+	{org = "ballerina", name = "log"},
+	{org = "ballerinai", name = "observe"}
+]
+modules = [
+	{org = "wso2", packageName = "choreo.sendemail", moduleName = "choreo.sendemail"}
 ]
 
 

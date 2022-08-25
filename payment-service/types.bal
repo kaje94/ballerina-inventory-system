@@ -8,7 +8,22 @@ type Payment record {
     # Number of items to order
     int requiredCount;
     # Succeed payment on inital order placement
-    boolean? succeedPayment;
+    boolean succeedPayment;
     # Succeed order dispatch on initial order placement
-    boolean? succeedDispatch;
+    boolean succeedDispatch;
+};
+
+type PaymentRequest record {
+    # Unique ID of order
+    string orderId;
+    # Email of the user who's plcing the order
+    string email;
+    # ID of the inventory item
+    string itemId;
+    # Number of items to order
+    int requiredCount;
+    # Succeed payment on inital order placement
+    boolean succeedPayment;
+    # Succeed order dispatch on initial order placement
+    boolean succeedDispatch;
 };
