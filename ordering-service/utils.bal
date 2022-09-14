@@ -1,6 +1,4 @@
 import ballerina/http;
-import ballerina/io;
-import wso2/choreo.sendemail;
 
 # Generate and return 202 order accepted response
 # + area - Area where the order is currently at. eg: inventory, payment, etc
@@ -21,23 +19,8 @@ function orderPlacedResponse() returns http:Response {
     return res;
 }
 
-# Send an email to the user who placed an order confirming that the order is placed
-# + emailAddress - Email address to which the email needs to be sent
-function sendOrderPlacedMail(string emailAddress) {
-    io:println(string `Sending order completion email to ${emailAddress}`);
-    string mailSubject = "Your order is complete";
-    string mailBody = "Your order has been dispatched to your address after verifying your payment and inventory availablity.";
-
-    sendemail:Client|error sendemailEp = new ();
-    if (!(sendemailEp is error)) {
-        string|error emailRes = sendemailEp->sendEmail(recipient = emailAddress, subject = mailSubject, body = mailBody);
-        if (!(emailRes is error)) {
-            io:println("Failed to send email notification");
-        }
-    }
-}
 
 function itemToXml(ItemAllocation item) returns xml {
     // Uses a template containing a query expression, which also contains a template.
-    return xml `<payment><orderId>${item.orderId}</orderId><email>${item.email}</email><itemId>${item.itemId}</itemId><requiredCount>${item.requiredCount}</requiredCount><succeedDispatch>${item.succeedDispatch==true}</succeedDispatch><succeedPayment>${item.succeedPayment==true}</succeedPayment></payment>`;
+    return xml `<payment><orderId>${item.orderId}</orderId><email>${item.email}</email><itemId>${item.itemId}</itemId><requiredCount>${item.requiredCount}</requiredCount></payment>`;
 }
